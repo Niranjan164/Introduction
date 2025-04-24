@@ -151,50 +151,46 @@
     function formatURL(url) {
       url = url.toLowerCase();
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url; // Ensure https:// is added
+        url = 'https://' + url;
       }
       return url;
     }
 
     function saveLink() {
       const name = document.getElementById('name').value.trim();
-      let url = document.getElementById('url').value.trim();
+      let url = document.getElementById('url').value.trim().toLowerCase();
+      url = formatURL(url);
 
-      if (!name || !url) {
-        alert("Please fill in both fields.");
-        return;
+      if (name && url) {
+        let links = JSON.parse(localStorage.getItem("Niranjan")) || {};
+        links[name] = url;
+        localStorage.setItem("Niranjan", JSON.stringify(links));
+        hideForm();
+        loadLinks();  // Load updated links
       }
-
-      url = formatURL(url);  // Format the URL properly
-
-      let links = JSON.parse(localStorage.getItem("Niranjan")) || {};
-      links[name] = url;
-      localStorage.setItem("Niranjan", JSON.stringify(links));
-      hideForm();
-      loadLinks();  // Reload the list of links
     }
 
     function loadLinks() {
       const main = document.getElementById('main');
-      main.innerHTML = '';  // Clear the existing links
+      main.innerHTML = '';  // Clear existing links
       const links = JSON.parse(localStorage.getItem("Niranjan")) || {};
       for (const name in links) {
         const a = document.createElement('a');
         a.className = 'link-button';
         a.textContent = name;
         a.href = links[name];
-        a.target = "_blank"; // Open in a new tab
+        a.target = "_blank";
         main.appendChild(a);
       }
     }
 
     function showForm() {
-      document.getElementById('form-overlay').style.display = 'flex';  // Show the form
+      document.getElementById('form-overlay').style.display = 'flex';
     }
 
     function hideForm() {
-      document.getElementById('form-overlay').style.display = 'none';  // Hide the form
-      document.getElementById('name').value = '';  // Clear the form inputs
+      document.getElementById('form-overlay').style.display = 'none';
+      document.getElementById('name').value = '';
       document.getElementById('url').value = '';
     }
 
@@ -209,7 +205,8 @@
       cubeBg.appendChild(cube);
     }
 
-    loadLinks();  // Load links on page load
+    // Initially load any saved links
+    loadLinks();
   </script>
 
 </body>
